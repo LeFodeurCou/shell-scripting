@@ -1,0 +1,43 @@
+# Start by ignoring all
+
+*
+/*
+**/*
+
+# Ignore all files named .DS_Store or ending with .log
+**/.DS_Store
+**.log
+
+# Not ignore file I want to push
+
+!.bashrc
+
+# Working scripts
+
+!d-mysql
+!serviceExists
+!addrMacWireless
+!archive
+!addUserToApachGroup
+!d-php
+!lastModif
+!npm-init
+!vhostCreate
+
+
+# Not sure
+
+!gitMake
+!installLocalBootstrap
+
+# Not working scripts
+
+!confInstall
+
+
+# End by ignoring git files
+
+**/.git
+**/.gitignore
+!.gitignore
+!README.md

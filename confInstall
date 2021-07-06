@@ -1,0 +1,285 @@
+#!/bin/bash
+
+## TODO Write and / or display a guideline about all things which arre downloaded and installed by this script ;)
+## TODO download gitlab for backer and may be hook
+## TODO execute ssh command, handle key and key.pub (in ~/.ssh) and make an alias to get public key
+
+source ~/bin/config/.bashFormat
+
+echo ""
+echo "$GRAS$MAGENTA configuration installation$BLANC$NORMAL"
+echo ""
+
+NULL=' (aucun)'
+
+MMV=`apt-cache policy mmv | grep 'Installé' | cut -d':' -f2`
+if [ "$MMV" == "$NULL" ]
+then
+	sudo apt-get install -y mmv
+else
+	echo "$VERT* mmv is already installed$BLANC"
+fi
+
+DECONFEDITOR=`apt-cache policy dconf-editor | grep 'Installé' | cut -d':' -f2`
+if [ "$DCONFEDITOR" == "$NULL" ]
+then
+	sudo apt-get install -y dconf-editor
+else
+	echo "$VERT* dconf-editor is already installed$BLANC"
+fi
+
+SSHPASS=`apt-cache policy sshpass | grep 'Installé' | cut -d':' -f2`
+if [ "$SSHPASS" == "$NULL" ]
+then
+	sudo apt-get install -y sshpass
+else
+	echo "$VERT* sshpass is already installed$BLANC"
+fi
+
+GEDIT=`apt-cache policy gedit | grep 'Installé' | cut -d':' -f2`
+if [ "$GEDIT" == "$NULL" ]
+then
+	sudo apt-get install -y gedit gedit-*
+else
+	echo "$VERT* gedit is already installed$BLANC"
+fi
+
+
+PYTHON=`apt-cache policy python3 | grep 'Installé' | cut -d':' -f2`
+if [ "$PYTHON" == "$NULL" ]
+then
+	sudo apt-get install python3 python3-pip python3-dev
+else
+	echo "$VERT* python is already installed$BLANC"
+fi
+
+APACHE2=`apt-cache policy apache2 | grep 'Installé' | cut -d':' -f2`
+if [ "$APACHE2" == "$NULL" ]
+then
+	sudo apt-get install -y apache2
+	sudo a2enmod rewrite
+else
+	echo "$VERT* apache2 is already installed$BLANC"
+fi
+
+PHP5=`apt-cache policy php5.6 | grep -m 1 'Installé' | cut -d':' -f2`
+if [ "$PHP5" == "$NULL" ]
+then
+	sudo add-apt-repository ppa:ondrej/php
+	sudo apt-get install -y php5.6 php5.6-mbstring php5.6-mysql php5.6-dev php5.6-zip php5.6-curl php5.6-gd php5.6-xml libapache2-mod-php5.6 php5.6-intl php5.6-mcrypt
+else
+	echo "$VERT* php5.6 is already installed$BLANC"
+fi
+
+PHP72=`apt-cache policy php7.2 | grep 'Installé' | cut -d':' -f2`
+if [ "$PHP72" == "$NULL" ]
+then
+	sudo apt-get install -y php7.2 php-pear php7.2-dev php7.2-zip php7.2-curl php7.2-gd php7.2-mysql php7.2-xml libapache2-mod-php7.2 php7.2-mbstring php-fpm php-xmlrpc php7.2-intl libmcrypt-dev
+	sudo pecl install mcrypt
+else
+	echo "$VERT* php 7.2 is already installed$BLANC"
+fi
+
+PHP73=`apt-cache policy php7.3 | grep 'Installé' | cut -d':' -f2`
+if [ "$PHP72" == "$NULL" ]
+then
+	sudo apt-get install -y php7.3 php7.3-dev php7.3-zip php7.3-curl php7.3-gd php7.3-mysql php7.3-xml php7.3-xmlrpc libapache2-mod-php7.3 php7.3-mbstring php7.3-intl
+else
+	echo "$VERT* php 7.3 is already installed$BLANC"
+fi
+
+MYSQL=`apt-cache policy mysql-server | grep 'Installé' | cut -d':' -f2`
+if [ "$MYSQL" == "$NULL" ]
+then
+	sudo apt install mysql-server
+	sudo mysql_secure_installation
+	sudo mkdir /etc/phpmyadmin/upload
+	sudo mkdir /etc/phpmyadmin/save
+	sudo chmod a+w /etc/phpmyadmin/upload
+	sudo chmod a+w /etc/phpmyadmin/save
+	## TO DO See how to create root user / add grant and privilege on all the database and may flush privileges ?
+else
+	echo "$VERT* mysql is already installed$BLANC"
+fi
+
+PHPMYADMIN=`apt-cache policy phpmyadmin | grep 'Installé' | cut -d':' -f2`
+if [ "$PHPMYADMIN" == "$NULL" ]
+then
+	sudo apt-get install -y phpmyadmin
+	sudo ln -s /usr/share/phpmyadmin/ /var/www/html/
+	echo 'Symbolic link of /usr/share/phpmyadmin/ has been created in /var/www/html/'
+else
+	echo "$VERT* phpmyadmin is already installed$BLANC"
+fi
+
+GIT=`apt-cache policy git | grep 'Installé' | cut -d':' -f2`
+if [ "$GIT" == "$NULL" ]
+then
+	sudo apt-get install -y git
+else
+	echo "$VERT* git is already installed$BLANC"
+fi
+
+SSL=`apt-cache policy libssl1.0-dev | grep 'Installé' | cut -d':' -f2`
+if [ "$SSL" == "$NULL" ]
+then
+	sudo apt-get install -y libssl1.0-dev
+else
+	echo $VERT"* libssl is already installed"$BLANC
+fi
+
+NODE=`apt-cache policy nodejs-dev | grep 'Installé' | cut -d':' -f2`
+if [ "$NODE" == "$NULL" ]
+then
+	sudo apt-get install -y nodejs-dev
+	npm init -y
+else
+	echo $VERT"* nodejs is already installed"$BLANC
+fi
+
+NODEGYP=`apt-cache policy node-gyp | grep 'Installé' | cut -d':' -f2`
+if [ "$NODEGYP" == "$NULL" ]
+then
+	sudo apt-get install -y node-gyp
+else
+	echo $VERT"* node-gyp is already installed"$BLANC
+fi
+
+NPM=`apt-cache policy npm | grep 'Installé' | cut -d':' -f2`
+if [ "$NPM" == "$NULL" ]
+then
+	sudo apt-get install -y npm
+else
+	echo $VERT"* npm is already installed"$BLANC
+fi
+
+NPMADDSCRIPT=`npm list -g npm-add-script | grep empty`
+if [ "$NPMADDSCRIPT" != "" ]
+then
+	sudo npm install -g npm-add-script
+else
+	echo $VERT"* npm-add-script is already installed"$BLANC
+fi
+
+COMPOSER=`apt-cache policy composer | grep 'Installé' | cut -d':' -f2`
+if [ "$COMPOSER" == "$NULL" ]
+then
+	sudo apt-get install -y composer
+else
+	echo $VERT"* composer is already installed"$BLANC
+fi
+
+WEBPACK=`apt-cache policy webpack | grep 'Installé' | cut -d':' -f2`
+if [ "$WEBPACK" == "$NULL" ]
+then
+	sudo apt-get install -y webpack
+else
+	echo $VERT"* webpack is already installed"$BLANC
+fi
+
+GIMP=`apt-cache policy gimp | grep 'Installé' | cut -d':' -f2`
+if [ "$GIMP" == "$NULL" ]
+then
+	sudo apt-get install -y gimp
+else
+	echo "$VERT* gimp is already installed$BLANC"
+fi
+
+INKSCAPE=`apt-cache policy inkscape | grep 'Installé' | cut -d':' -f2`
+if [ "$INKSCAPE" == "$NULL" ]
+then
+	sudo apt-get install -y inkscape
+else
+	echo "$VERT* inkscape is already installed$BLANC"
+fi
+
+GNOMETWEAKTOOL=`apt-cache policy gnome-tweak-tool | grep 'Installé' | cut -d':' -f2`
+if [ "$GNOMETWEAKTOOL" == "$NULL" ]
+then
+	sudo apt-get install -y gnome-tweak-tool
+else
+	echo "$VERT* gnome-tweak-tool is already installed$BLANC"
+fi
+
+PV=`apt-cache policy pv | grep 'Installé' | cut -d':' -f2`
+if [ "$PV" == "$NULL" ]
+then
+	sudo apt-get install -y pv
+else
+	echo "$VERT* pv is already installed$BLANC"
+fi
+
+DEV_DIR=~/dev/;
+if [ ! -d "$DEV_DIR" ]
+then
+	mkdir ${DEV_DIR}
+	echo "-> Directory "${DEV_DIR}" has been created"
+	sudo ln -s ~/dev /var/www/html/dev
+	echo "-> Symolic link for "${DEV_DIR}" has been created in /var/www/"
+else
+	echo "$VERT* Directory "${DEV_DIR}" is already created$BLANC"
+fi
+
+INDEX=~/dev/index.php
+if [ ! -f "$INDEX" ]
+then
+	## TODO create a php file in dev with purpose to be an real index for all project. Php file must read his current directory and display a link for each folders where each folder is a project. WARNING : may be we will need to change href of these links if a virtual host extists !!!
+	echo "
+<?php
+	\$dirStream = opendir('./');
+	while (\$element = readdir(\$dirStream))
+		if (\$element != '.' && \$element != '..' && \$element != 'index.php')
+			echo '<a href=\"' . \$element . '\">' . \$element . '</a><br />';
+	closedir(\$dirStream);
+?>" > ${INDEX}
+	echo $VERT"-> index.php is created in ~/dev/ !"$BLANC
+else
+	echo $VERT"* index.php is already created in ~/dev/ !"$BLANC
+fi
+
+TMP=~/tmp/
+if [ ! -d "$TMP" ]
+then
+	mkdir $TMP
+	echo $VERT"-> Folder $TMP is created !"$BLANC
+else
+	echo $VERT"* Folder $TMP is already created !"$BLANC
+fi
+
+BIN=~/bin
+if [ ! -d "$BIN" ]
+then
+	mkdir $BIN
+	echo $VERT"-> Folder $BIN is created !"$BLANC
+else
+	echo $VERT"* Folder $BIN is already created !"$BLANC
+fi
+
+TOOLS=~/tools
+if [ ! -d "$TOOLS" ]
+then
+	mkdir $TOOLS
+	echo $VERT"-> Folder $TOOLS is created !"$BLANC
+else
+	echo $VERT"* Folder $TOOLS is already created !"$BLANC
+fi
+
+BASHRC_PATH=~/.bashrc
+BASHRC_PATH_OLD=~/.oldBashrc
+BASHRC_ADD_PATH=~/bin/.myBashrc
+
+if [ ! -f "$BASHRC_PATH_OLD" ]
+then
+	mv ${BASHRC_PATH} ${BASHRC_PATH_OLD}
+	cat ${BASHRC_PATH_OLD} ${BASHRC_ADD_PATH} > ${BASHRC_PATH}
+	echo 'Your ~/bashrc has been configured'
+	echo "------> Don't forget to use source ~/.bashrc !"	
+else
+	echo ""
+	echo $GRAS$VERT"* You have already initialized your configuration. Try the command bashrc to make any change yourself ;)"
+	echo ""
+	echo $MAGENTA"P.S.	Don't forget to source ~/.bashrc now !"
+	echo "P.S.2.	You can use gnome-tweaks to configure your settings ;) "
+	echo $BLANC$NORMAL
+	echo ""
+fi

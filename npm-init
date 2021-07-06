@@ -1,0 +1,139 @@
+#!/bin/sh
+
+srcFolder="_dev";
+
+cat >> .gitignore <<EOF
+# dependencies
+/node_modules
+
+# production
+/dist
+
+npm-debug.log*
+/.cache
+*.code-workspace
+*~
+EOF
+
+# sudo npm install -g
+sudo npm i -g add-project-script
+npm init -y
+npm i --save-dev babel-preset-env
+npm i --save-dev make-dir-cli
+npm i --save-dev del-cli
+npm i --save-dev move-cli
+npm i --save-dev replace-in-files-cli
+
+add-project-script -n "make-all-dir" -v "make-dir $srcFolder/assets/ && make-dir $srcFolder/scss/ && make-dir $srcFolder/js/ && make-dir $srcFolder/jsx/ && make-dir dist"
+
+npm run make-all-dir
+
+jsIndex='<script src="js/index.js"></script>';
+js="document.body.innerHTML = '<span>Welcome</span>';";
+scssMeta='<link rel="stylesheet" type="text/css" href="scss/index.scss" />';
+scss="span
+{
+	color: green;
+}
+";
+html="";
+
+cat >> "$srcFolder"/js/index.js <<EOF
+$js
+EOF
+
+cat >> "$srcFolder"/scss/index.scss <<EOF
+$scss
+EOF
+
+for arg in "$@"; do
+	if [ "$arg" = "react" ]
+	then
+		npm i --save react react-dom
+		npm i --save-dev babel-preset-react
+
+		html="<div id='app'></div>";
+		js="import React from 'react';
+import ReactDOM from 'react-dom';
+
+class Main extends React.Component {
+    render() {
+        return <div>
+            <div className='container'>
+                <h1>Hello {this.props.name}</h1>
+            </div>
+        </div>
+    }
+}
+
+let App = document.getElementById('app');
+ReactDOM.render(<Main />, App);
+";
+		cat >> .babelrc <<EOF
+{
+  "presets": ["env", "react"],
+  "env": {
+    "production": {
+      "plugins": ["transform-remove-console"]
+    }
+  }
+}
+EOF
+
+    cat >> "$srcFolder"/jsx/Main.jsx <<EOF
+$js
+EOF
+    add-project-script -n "del-not-usefull-dir" -v "del $srcFolder/scss/ && del $srcFolder/js/"
+    npm run del-not-usefull-dir
+    jsIndex='<script src="jsx/Main.jsx"></script>';
+    scssMeta='';
+	fi
+
+  if [ "$arg" = "git" ]
+	then
+    git init
+  fi
+done
+
+#npm i --save-dev parcel
+# Previous statment install parcel 2.0 beta ...
+npm i --save-dev parcel@1.12.3
+npm i --save-dev sass
+npm i --save-dev npm-run-all
+npm i --save-dev babel-core
+npm i --save-dev babel-plugin-transform-remove-console
+
+cat >> "$srcFolder"/index.html <<EOF
+<!DOCTYPE html>
+<html>
+<head>
+	$scssMeta
+</head>
+<body>
+	$html
+  $jsIndex
+</body>
+</html>
+EOF
+
+cat >> "$srcFolder"/assets/index.html <<EOF
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="refresh" content="0;URL=/"> 
+</head>
+<body>
+
+</body>
+</html>
+EOF
+
+## For parcel watch, don't forget to use <img /> or import 'asset/*.ext' to import static assets like png / jpg / etc.
+
+add-project-script -n "start" -v "parcel $srcFolder/index.html --out-dir dist --open"
+add-project-script -n "mk" -v "make-dir dist"
+add-project-script -n "clean" -v "del dist"
+add-project-script -n "parcelDev" -v "parcel build $srcFolder/index.html --out-dir dist"
+add-project-script -n "dev" -v "NODE_ENV=dev run-s clean mk parcelDev"
+add-project-script -n "parcelProd" -v "parcel build --no-source-maps $srcFolder/index.html --out-dir dist"
+add-project-script -n "prod" -v "NODE_ENV=production run-s clean mk parcelProd"

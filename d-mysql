@@ -1,0 +1,43 @@
+#!/bin/bash
+
+function trap_ctrlc()
+	{
+		echo '';
+		echo 'Stoping docker container ...';
+		docker stop mysql;
+		if service --status-all | grep -Fq 'mysql';
+		then
+			echo 'Launching mysql on the computer';
+			sudo service mysql start;
+		fi
+		exit 0;
+	}
+
+version=5.7.31
+for arg in "$@"; do
+	if [ "$arg" = "5.6" ]
+	then
+		version=5.6
+	elif [ "$arg" = "8.0" ]
+	then
+		version=8.0
+	fi
+done
+
+trap "trap_ctrlc" 2
+
+if service --status-all | grep -Fq 'mysql';
+then
+	echo 'Stoping mysql on the computer ...';
+	sudo service mysql stop;
+	# sudo pkill mysqld;
+fi
+echo 'Launching docker container ...'
+mkdir -p /home/nagrarok/dev/docker-mysql-databases/$version
+docker run -d --rm --name mysql -p 3306:3306 -v /home/nagrarok/dev/docker-mysql-databases/$version:/var/lib/mysql/ -e MYSQL_ROOT_PASSWORD="{SQL}#42sqlpass" mysql:$version
+
+while :
+do
+	echo "Hit [CTRL+C] to stop!";
+	read default;
+done

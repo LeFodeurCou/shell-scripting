@@ -1,0 +1,62 @@
+#!/bin/bash
+
+if [ -z "$1" ]
+then
+	echo ""
+	echo 'Missing argument for virtual host name ...' >&2
+	echo 'Normal use : vhostCreate vHostName symbol[optional]' >&2
+	echo ""
+	exit 1
+fi
+
+symbol=""
+if [ -n "$2" ]
+then
+	symbol=".$2"
+fi
+
+echo ""
+echo '> Create a virtual host'
+echo ""
+
+hostName="$1$symbol.local"
+hostLine="\n###\tVirtual host\t$1\t###\n127.0.0.1\t$hostName"
+
+apachePath=/etc/apache2/sites-available/
+devPath=~/dev/$hostName/
+
+fileContent="
+<VirtualHost *:80>\n
+\n
+\tServerAdmin webmaster@localhost\n
+\tServerName www.$hostName\n
+\tServerAlias $hostName\n
+\tDocumentRoot /var/www/html/dev/$hostName/\n
+\n
+\t<Directory />\n
+\t\tOrder Deny,Allow\n
+\t\tDeny from all\n
+\t\tOptions -Indexes -Includes -ExecCGI -FollowSymlinks\n
+\t</Directory>\n
+\n
+\t<Directory /var/www/html/dev/$hostName/>\n
+\t\tOrder allow,deny\n
+\t\tallow from all\n
+\t\tAllowOverride All\n
+\t\tOptions -Indexes -Includes -ExecCGI +FollowSymlinks\n
+\t</Directory>\n
+\n
+\tErrorLog \${APACHE_LOG_DIR}/error.log\n
+\tCustomLog \${APACHE_LOG_DIR}/access.log combined\n
+\n
+</VirtualHost>\n
+"
+
+sudo cp /etc/hosts /etc/hosts.save
+echo -e $hostLine | sudo tee -a /etc/hosts >/dev/null
+echo -e $fileContent | sudo tee $apachePath$hostName'.conf' >/dev/null
+mkdir $devPath
+echo "<h1>Welcome to $hostName</h1>" > $devPath'index.html'
+sudo a2ensite $hostName'.conf'
+sudo service apache2 restart
+## firefox -new-tab -url $hostName

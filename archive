@@ -1,0 +1,62 @@
+#!/bin/bash
+
+# TODO may be if we use this script without argument it make an archive of the current folder ?
+
+if [ -z "$1" ] ## dynamic variable name
+then
+	echo ""
+	echo 'Missing at least archive argument ...' >&2
+	echo 'Normal use : archive contentToArchive[optional]' >&2
+	echo ""	
+	exit 1
+fi
+
+if [ -z "$2" ]
+then
+	echo ""
+	echo "> Archive : extracting"
+	echo ""
+	type=`file "$1" | grep -E "tar|gzip"`
+	if [ -n "$type" ] # It is a tar file
+	then
+#		tar -xf "$1" --verbose
+		pv "$1" | tar -xz
+		if [ "$?" != 0 ]
+		then
+			echo ""
+			echo "A problem occured during extracting process. Be sure you try to extract data from a good archive file ..." >&2
+			echo ""
+			exit 2
+		fi
+	else # it is a zip file
+		unzip -o $1 | pv -l -s $(unzip -Z -1 $1 | wc -l) > /dev/null;
+		if [ "$?" != 0 ]
+		then
+			echo ""
+			echo "A problem occured during extracting process. Be sure you try to extract data from a good archive file ..." >&2
+			echo ""
+			exit 2
+		fi
+	fi
+	echo ""
+	echo "Archive extraction done"
+	echo ""
+else
+	echo ""
+	echo "> Archive : creating"
+	echo ""
+	
+	tar -cpzf $1".tar" $2 --verbose
+	if [ "$?" != 0 ]
+	then
+			echo ""
+			echo "A problem occured during creating process ..." >&2
+			echo ""
+			exit 2
+	fi
+	echo ""
+	echo "Archive creation done"
+	echo ""
+fi
+
+exit 0

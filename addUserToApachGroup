@@ -1,0 +1,6 @@
+#!/bin/bash
+
+if [ -n "$1" ]
+then
+	sudo usermod -a -G www-data "$1";
+fi

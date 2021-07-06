@@ -1,0 +1,27 @@
+#!/bin/bash
+
+nbrParameters=2
+
+for (( i=1; i<=$nbrParameters; i++ ))
+do
+	if [ -z ${!i} ] ## dynamic variable name
+	then
+		echo ""
+		echo 'Missing at least one argument ...' >&2
+		echo 'Normal use :gitMake accountNAme repoName' >&2
+		echo ""	
+		exit 1
+	fi
+done
+
+git init
+if [ ! -f "README.md" ]
+then
+	touch README.md
+fi
+git add .
+git commit -m "Init git repository"
+git remote add origin git@github.com:"$1"/"$2".git
+git push -u origin master
+
+trap_ctrlc "done"

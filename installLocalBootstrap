@@ -1,0 +1,9 @@
+#!/bin/bash
+
+if [ ! -f ./package.json ]
+then
+	npm init -y
+fi
+
+npm i bootstrap
+npm i jquery
