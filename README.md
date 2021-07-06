@@ -1,6 +1,4 @@
-# shell-scripting 🐧
-
-Some scripts shell and aliases to keep your life easy and fun.
+# shell scripting 🐧
 
 ## d-mysql
 
@@ -124,9 +122,9 @@ Now I have `grep -Rn` in my memory but I use always this function if I am search
 
 I think it's the first command I use when I am coding 😇
 
-Bonus - Combo with find to search in specifics files :
+Bonus - Combo with `find` to search in specifics files :
 `find . -name '*.js' -exec grep -Rn {} --color=auto +`
-It save the case you are searching for a classname by exemple and grep search in all files, css, html, js or other while you want only search in js files.
+It save the case you are searching for a classname by exemple and `grep` search in all files, css, html, js or other while you want only search in js files.
 
 ## save
 
@@ -192,3 +190,197 @@ function phpSwitch()
 Before I have a script to use easily php docker container, I used this to switch between installed php versions.
 
 The truth ? I still use it 🐒
+
+## setGoodChmod, setGoodChown and setGood
+
+```
+function setGoodChmod()
+{
+	sudo find . -type f -exec chmod 666 {} \; && sudo find . -type d -exec chmod 775 {} \;
+}
+```
+
+```
+function setGoodChown()
+{
+	sudo find . -exec chown -R www-data:www-data {} \;
+}
+```
+
+```
+function setGood()
+{
+	setGoodChmod;
+	setGoodChown;
+}
+```
+
+First sets `chmod` for current directory and sub-directories recursively.
+Second does almost the same, but for `chown`.
+Last does both.
+
+It's useful when you work with a soft that needs specific rights on your files (like apache 🤔)
+
+## nbrLines
+
+```
+function nbrLines()
+{
+	res=0
+	if [ -z "$1" ]
+	then
+		var="php";
+	else
+		var="$1";
+	fi
+	for f in `find . -type f -name "*.""$var"`; 
+	do
+		let " res += `wc -l $f | awk '{print $1}'`  ";
+	done
+	echo $res
+}
+```
+😅
+Just a line counter, default if for php files but you can use it for all files you want if they have same extension (.js, .sh, .yml etc.)
+
+## cdSpecial
+
+```
+function cdSpecial()
+{
+	if [ -n "$1" ]
+	then
+		\cd "$1" && clear && ls -ilath;
+	else
+		\cd /home/${USER}/ && clear && ls -ilath;
+	fi
+}
+```
+
+A function that wanted to be a built-in instead of a built-in 😎
+
+It is useful for recursive `cd` use and to add `clear` and some option to `ls`. I use it for my aliases.
+
+## mk
+```
+function mk()
+{
+	if [ -n "$1" ]
+	then
+		mkdir -pv "$1" && cd "$_"
+	else
+		echo $RED"You need one parameter"$NORMAL
+	fi
+}
+```
+Instead of `mkdir`. May create directory and sub-directories and use `cd` to go directly in.
+
+## Aliases
+
+```
+alias bashrc='code ~/.bashrc'
+alias source='source ~/.bashrc'
+```
+To edit easily ~/.basrch file and update current shell with last modifications.
+
+```
+alias cd:='cd ../'
+alias cd::='cd ../../'
+alias cd:::='cd ../../../'
+alias cd::::='cd ../../../../'
+alias cd:::::='cd ../../../../../'
+alias cd-='cd -'
+alias cd='cdSpecial'
+```
+Because it's possible :trollface: And faster. Very faster than normal use of `cd`.
+See the usage of `cdSpecial`. Without it doesn't work.
+
+```
+alias dev='cd ~/dev/'
+alias bin='cd ~/bin/'
+alias doc='cd ~/Documents/'
+alias tst='cd ~/tmp/test/'
+alias tools='cd ~/dev/tools/'
+alias trash='cd ~/.local/share/Trash/files/'
+```
+Other `cd` aliases. To be honnest I mostly use dev and a little bin when I need it, else I use a "classic command".
+
+```
+alias ll='clear && ls -ilaths --color=auto'
+alias l='ll'
+```
+`ls` aliases. `l` is two times faster than `ll` ! Amazing ! 😂
+Show more useful data than just `ls` like rights, weight etc. Obviously show hidden files (like .bashrc)
+
+`alias untar='tar -xf'`
+
+I used it before I did `archive` script.
+
+`alias py='python3.6'`
+
+To summon a snake versione 3.6 :trollface:
+More seriously, if you don't know what is Python, go google it 😉
+
+`alias build='npm run build'`
+No longer in use, but it was useful in its time.
+
+`alias shells='cat /etc/shells'`
+
+Show shells which are available on your machine. Interesting 🕵️
+
+`alias ports="sudo lsof -i -P  | grep -i 'listen'"`
+
+Show what ports are open on your machine and which application are using them.
+
+`alias os='clear && cat /etc/os-release'`
+
+Show informations about your Operating System
+
+```
+alias log='clear && sudo cat /var/log/apache2/error.log | sed "s/\[\(.*\)\] \[\(.*\)\] \[\(.*\)\] \[\(.*\)\] /$BOLD$GREEN\1 $RED\2 $GREEN\3 $BLUE\4$WHITE \n\n/g" | sed "s/\(line.*\)/$RED\1$WHITE$NORMAL\n/g" | sed "s/\(\.local\)\(.*\.php\)/\1$MAGENTA\2$WHITE/g"'
+```
+
+Wow regex in aliases thank to `sed` 😎
+Display the content of your apache log. Useful when you have only a white page when you devlop your web site.
+Also, color it. Globaly it is a more friendly view than just `cat` the file.
+(may be you need to change the exact file to make it work).
+
+```
+alias rmLog='sudo rm -rf /var/log/apache2/error.log && sudo service apache2 restart'
+```
+When you have too many logs. After you will not have any logs. 💥
+
+```
+alias glog="git log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)' --all"
+```
+If you use git like a pro (in terminal ? 😇), it may be useful to display the git commit historic in a more friendly view (may not be visualy better than a graphical tool, but it is here).
+
+```
+alias gchmod="git config core.fileMode false"
+```
+Veeeery useful in order to ignore rights changes when you use `git add .` !!! Avoid the billion of files to commit after used `chmod` ...
+
+```
+alias codeExt="code --list-extensions | xargs -L 1 echo code --install-extension"
+```
+Fun and allow you to share your VSCode plugins 😄
+
+```
+alias getPublicIP="hostname -I | cut -d ' ' -f1"
+```
+Get your public IP. Not only for Minecraft.
+
+```
+alias nbrShLines="find . -maxdepth 1 -perm -1 -type f -exec cat {} + | wc -l"
+```
+
+Like function nbrLine but only for shell scripts and without use `.sh` at the end
+
+## 🔐 License
+
+MIT
+
+-------------------
+## 📢 Last word
+
+Don't forget, be crazy 💥💥💥
