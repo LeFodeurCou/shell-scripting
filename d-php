@@ -10,19 +10,20 @@ function trap_ctrlc()
 	}
 
 version=7.0
-# for arg in "$@"; do
-# 	if [ "$arg" = "5.6" ]
-# 	then
-# 		version=5.6
-# 	fi
-# done
+for arg in "$@"; do
+	if [ "$arg" = "5.6" ]
+	then
+		version=5.6
+	elif [ "$arg" = "8.0" ]
+	then
+		version=8.0
+	fi
+done
 
 trap "trap_ctrlc" 2
 
 # echo 'Stoping php on the computer ...';
 # sudo service php stop;
-# sudo service mysql stop;
-# sudo pkill mysqld;
 echo 'Launching docker container ...'
 cat >> Dockerfile <<EOF
 FROM php:7.0-fpm-alpine AS php
