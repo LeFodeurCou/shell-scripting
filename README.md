@@ -312,27 +312,39 @@ alias l='ll'
 `ls` aliases. `l` is two times faster than `ll` ! Amazing ! 😂
 Show more useful data than just `ls` like rights, weight etc. Obviously show hidden files (like .bashrc)
 
-`alias untar='tar -xf'`
+```
+alias untar='tar -xf'
+```
 
 I used it before I did `archive` script.
 
-`alias py='python3.6'`
+```
+alias py='python3.6'
+```
 
 To summon a snake versione 3.6 :trollface:
 More seriously, if you don't know what is Python, go google it 😉
 
-`alias build='npm run build'`
+```
+alias build='npm run build'
+```
 No longer in use, but it was useful in its time.
 
-`alias shells='cat /etc/shells'`
+```
+alias shells='cat /etc/shells'
+```
 
 Show shells which are available on your machine. Interesting 🕵️
 
-`alias ports="sudo lsof -i -P  | grep -i 'listen'"`
+```
+alias ports="sudo lsof -i -P  | grep -i 'listen'"
+```
 
 Show what ports are open on your machine and which application are using them.
 
-`alias os='clear && cat /etc/os-release'`
+```
+alias os='clear && cat /etc/os-release'
+```
 
 Show informations about your Operating System
 
