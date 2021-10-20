@@ -1,0 +1,1 @@
+watch -c "docker logs minecraft-server | tail"

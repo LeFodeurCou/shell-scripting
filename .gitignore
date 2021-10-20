@@ -23,6 +23,9 @@
 !lastModif
 !npm-init
 !vhostCreate
+!myIP
+!flushIpOnLan
+!d-mclogs
 
 
 # Not sure
