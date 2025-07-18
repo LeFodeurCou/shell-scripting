@@ -37,6 +37,9 @@
 
 !confInstall
 
+# new scripts from Debian 12 installation
+
+!get_git_branch.sh
 
 # End by ignoring git files
 

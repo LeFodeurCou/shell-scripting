@@ -1,0 +1,12 @@
+get_git_branch() {
+    # Check if the current directory is inside a Git repository
+    git rev-parse --is-inside-work-tree > /dev/null 2>&1
+    if [ $? -eq 0 ]; then
+        # Extract the current branch name
+        git symbolic-ref --short HEAD 2>/dev/null || git describe --tags --exact-match 2>/dev/null
+    else
+        echo ""
+    fi
+}
+
+get_git_branch()
