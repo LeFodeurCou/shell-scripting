@@ -9,4 +9,4 @@ get_git_branch() {
     fi
 }
 
-get_git_branch()
+get_git_branch
