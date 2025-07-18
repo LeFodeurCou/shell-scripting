@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# FIX IT ? Does nothing except when sourced by .bashrc file like
+
 update_prompt() {
     local GIT_BRANCH=$(get_git_branch)
     local PROMPT_GIT_BRANCH="${GIT_BRANCH:+ - Git : $GIT_BRANCH\n}"
