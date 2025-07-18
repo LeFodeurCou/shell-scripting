@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# TODO make a ~/bin/bashrcLibs/cdSpecial.sh instead of this file and source it from the .bashrc.lfc from setupEnvironment script. Same for update_prompt.
+
+function cdSpecial()
+{
+    if [ -n "$1" ]
+    then
+        \cd "$1" && clear && ls -ilaths;
+    else
+        \cd /home/${USER}/ && clear && ls -ilaths;
+    fi
+}
+
+cdSpecial

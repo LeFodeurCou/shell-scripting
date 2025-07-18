@@ -41,6 +41,7 @@
 
 !get_git_branch
 !update_prompt
+!cdSpecial
 
 # End by ignoring git files
 
