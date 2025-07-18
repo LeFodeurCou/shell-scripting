@@ -40,8 +40,8 @@
 # new scripts from Debian 12 installation
 
 !get_git_branch
-!update_prompt
-!cdSpecial
+!lib/
+!lib/**
 
 # End by ignoring git files
 

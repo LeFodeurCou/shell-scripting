@@ -1,11 +1,5 @@
-#!/bin/bash
-
-# FIX IT ? Does nothing except when sourced by .bashrc file like
-
 update_prompt() {
     local GIT_BRANCH=$(get_git_branch)
     local PROMPT_GIT_BRANCH="${GIT_BRANCH:+ - Git : $GIT_BRANCH\n}"
     PS1="${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]$PROMPT_GIT_BRANCH > "
 }
-
-update_prompt
